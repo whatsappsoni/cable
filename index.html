@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Produk Kabel & Jaringan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-network-wired text-blue-600 text-2xl"></i>
+                    <h1 class="text-xl font-bold text-gray-800">Katalog Produk Kabel & Jaringan</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Cari produk..." 
+                               class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button id="resetBtn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                    <button id="cartBtn" class="relative bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-shopping-cart"></i> Keranjang
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter Section -->
+    <section class="bg-white py-4 border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="font-medium">Kategori:</span>
+                    <select id="categoryFilter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Semua Kategori</option>
+                        <option value="fo">Fiber Optik</option>
+                        <option value="lan">Kabel LAN</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="font-medium">Merek:</span>
+                    <select id="brandFilter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Semua Merek</option>
+                        <option value="cable-link">Cable Link</option>
+                        <option value="falcom">Falcom</option>
+                        <option value="global">Global</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="font-medium">Harga:</span>
+                    <select id="priceFilter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Semua Harga</option>
+                        <option value="low">Di bawah Rp 500.000</option>
+                        <option value="mid">Rp 500.000 - Rp 800.000</option>
+                        <option value="high">Di atas Rp 800.000</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="mb-6 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-gray-800">Daftar Produk</h2>
+            <div class="text-gray-600">
+                Menampilkan <span id="productCount">0</span> produk
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="hidden text-center py-12">
+            <i class="fas fa-search text-gray-300 text-5xl mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600">Tidak ada produk yang ditemukan</h3>
+            <p class="text-gray-500 mt-2">Coba ubah filter atau kata kunci pencarian</p>
+        </div>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 id="modalTitle" class="text-2xl font-bold text-gray-800"></h2>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Product Images -->
+                    <div>
+                        <div class="mb-4">
+                            <img id="modalMainImage" src="" alt="" class="w-full h-64 object-cover rounded-lg">
+                        </div>
+                        <div id="modalThumbnails" class="grid grid-cols-4 gap-2">
+                            <!-- Thumbnails will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Deskripsi</h3>
+                            <p id="modalDescription" class="text-gray-600"></p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Fitur Utama</h3>
+                            <ul id="modalFeatures" class="list-disc list-inside text-gray-600 space-y-1">
+                                <!-- Features will be inserted here -->
+                            </ul>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Keunggulan</h3>
+                            <ul id="modalAdvantages" class="list-disc list-inside text-gray-600 space-y-1">
+                                <!-- Advantages will be inserted here -->
+                            </ul>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-blue-600" id="modalPrice"></h3>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2">Jumlah:</label>
+                            <div class="flex items-center">
+                                <button id="decreaseQty" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-l-lg">-</button>
+                                <input type="number" id="productQty" value="1" min="1" class="w-16 text-center border-t border-b">
+                                <button id="increaseQty" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-r-lg">+</button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button id="addToCartBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-center transition">
+                                <i class="fas fa-cart-plus mr-2"></i> Tambah ke Keranjang
+                            </button>
+                            <a id="modalBrochure" href="#" target="_blank" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-center transition">
+                                <i class="fas fa-file-pdf mr-2"></i> Unduh Brosur
+                            </a>
+                            <a href="https://wa.me/62895331244803?text=Halo,%20saya%20tertarik%20dengan%20produk%20ini" 
+                               target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-center transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Hubungi Kami
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Keranjang Belanja</h2>
+                    <button id="closeCartModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div id="cartItems" class="mb-6">
+                    <!-- Cart items will be inserted here -->
+                </div>
+
+                <div id="emptyCart" class="hidden text-center py-8">
+                    <i class="fas fa-shopping-cart text-gray-300 text-5xl mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600">Keranjang belanja kosong</h3>
+                </div>
+
+                <div id="cartSummary" class="border-t pt-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-semibold">Total:</span>
+                        <span id="cartTotal" class="text-xl font-bold text-blue-600">Rp 0</span>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="clearCartBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-trash mr-2"></i> Kosongkan Keranjang
+                        </button>
+                        <button id="checkoutBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-cash-register mr-2"></i> Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Informasi Pembeli</h2>
+                    <button id="closeCheckoutModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="checkoutForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Nama Lengkap</label>
+                            <input type="text" id="customerName" required class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="customerEmail" required class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">No. Telepon</label>
+                            <input type="tel" id="customerPhone" required class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Alamat</label>
+                            <input type="text" id="customerAddress" required class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">Catatan (Opsional)</label>
+                        <textarea id="customerNotes" rows="3" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+
+                    <div class="border-t pt-4 mb-6">
+                        <h3 class="text-lg font-semibold mb-2">Ringkasan Pesanan</h3>
+                        <div id="orderSummary" class="mb-4">
+                            <!-- Order summary will be inserted here -->
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-semibold">Total:</span>
+                            <span id="orderTotal" class="text-xl font-bold text-blue-600">Rp 0</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" id="cancelCheckoutBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition">
+                            Batal
+                        </button>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-file-invoice mr-2"></i> Cetak Invoice
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Invoice</h2>
+                    <div class="flex gap-2">
+                        <button id="printInvoiceBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-print mr-2"></i> Cetak
+                        </button>
+                        <button id="closeInvoiceModal" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="invoiceContent" class="border border-gray-300 rounded-lg p-6">
+                    <!-- Invoice content will be inserted here -->
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button id="newOrderBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition">
+                        Pesanan Baru
+                    </button>
+                    <a href="https://wa.me/62895331244803?text=Saya%20telah%20membuat%20pesanan%20dan%20mengirimkan%20invoice" 
+                       target="_blank" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fab fa-whatsapp mr-2"></i> Kirim ke WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Tentang Kami</h3>
+                    <p class="text-gray-300">Kami menyediakan solusi kabel dan jaringan terbaik untuk kebutuhan Anda.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Kontak</h3>
+                    <p class="text-gray-300"><i class="fas fa-phone mr-2"></i> +62 895-3312-44803</p>
+                    <p class="text-gray-300"><i class="fas fa-map-marker-alt mr-2"></i> Tuminting, Manado, Sulawesi Utara</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Jam Buka</h3>
+                    <p class="text-gray-300">Senin - Jumat: 08:00 - 17:00</p>
+                    <p class="text-gray-300">Sabtu: 08:00 - 12:00</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 Katalog Produk Kabel & Jaringan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/invoice.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
